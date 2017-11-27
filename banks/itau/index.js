@@ -20,11 +20,11 @@ exports.barcodeData = function (boleto) {
 
   var agencia = formatters.addTrailingZeros(boleto['agencia'], 4)
 
-  var valor = formatters.addTrailingZeros(boleto['valor'], 5)
-  var carteira = boleto['carteira']
+  var valor = formatters.addTrailingZeros(boleto['valor'], 10)
+  var carteira = boleto['carteira'] // 175, 174, 104, 109, 178 or 157
   var codigoCedente = formatters.addTrailingZeros(boleto['codigo_cedente'], 7)
 
-  var nossoNumero = carteira + formatters.addTrailingZeros(boleto['nosso_numero'], 11)
+  var nossoNumero = carteira + formatters.addTrailingZeros(boleto['nosso_numero'], 8)
 
   var barra = codigoBanco + numMoeda + fatorVencimento + valor + carteira + nossoNumero + formatters.mod10(agencia + conta + carteira + nossoNumero) + agencia + conta + formatters.mod10(agencia + conta) + '000';
 
@@ -48,6 +48,9 @@ exports.linhaDigitavel = function (barcodeData) {
   // 44-44    -> Zero (Fixo)
 
   var campos = []
+
+  // remove NaN
+  barcodeData = helper.removeNaNFromBarcode(barcodeData)
 
   // 1. Campo - composto pelo código do banco, código da moéda, as cinco primeiras posições
   // do campo livre e DV (modulo10) deste campo
